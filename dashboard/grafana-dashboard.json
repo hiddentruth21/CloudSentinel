@@ -1,0 +1,351 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "cloudsentinel-main",
+    "title": "🛡️ CloudSentinel Security Dashboard",
+    "description": "Real-time threat detection and compliance monitoring — AMD Cloud Computing Hackathon 2026",
+    "tags": ["cloudsentinel", "security", "compliance"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "5s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "🚨 Active Threats Detected",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "textMode": "auto",
+          "reduceOptions": {
+            "calcs": ["lastNotNull"]
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 1 },
+                { "color": "red", "value": 5 }
+              ]
+            },
+            "unit": "short",
+            "mappings": []
+          }
+        },
+        "targets": [
+          {
+            "expr": "sum(falco_events_total{priority='CRITICAL'})",
+            "legendFormat": "Critical Threats",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "⚡ Pods Auto-Isolated",
+        "type": "stat",
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "textMode": "auto",
+          "reduceOptions": {
+            "calcs": ["lastNotNull"]
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "orange", "value": 1 },
+                { "color": "red", "value": 3 }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "targets": [
+          {
+            "expr": "sum(cloudsentinel_pods_isolated_total)",
+            "legendFormat": "Isolated Pods",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "📊 GDPR Compliance Score",
+        "type": "gauge",
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+        "options": {
+          "reduceOptions": {
+            "calcs": ["lastNotNull"]
+          },
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 60 },
+                { "color": "green", "value": 80 }
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "targets": [
+          {
+            "expr": "cloudsentinel_gdpr_compliance_score",
+            "legendFormat": "GDPR Score",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "🔒 SOC2 Compliance Score",
+        "type": "gauge",
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+        "options": {
+          "reduceOptions": {
+            "calcs": ["lastNotNull"]
+          },
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 60 },
+                { "color": "green", "value": 80 }
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "targets": [
+          {
+            "expr": "cloudsentinel_soc2_compliance_score",
+            "legendFormat": "SOC2 Score",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "📈 Threat Detection Timeline",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+        "options": {
+          "tooltip": { "mode": "multi" },
+          "legend": { "displayMode": "list", "placement": "bottom" }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" },
+            "custom": {
+              "lineWidth": 2,
+              "fillOpacity": 10
+            }
+          }
+        },
+        "targets": [
+          {
+            "expr": "rate(falco_events_total{priority='CRITICAL'}[5m])",
+            "legendFormat": "Critical Events",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(falco_events_total{priority='WARNING'}[5m])",
+            "legendFormat": "Warning Events",
+            "refId": "B"
+          },
+          {
+            "expr": "rate(cloudsentinel_pods_isolated_total[5m])",
+            "legendFormat": "Pods Isolated",
+            "refId": "C"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "🌐 Network Traffic Anomalies",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+        "options": {
+          "tooltip": { "mode": "multi" },
+          "legend": { "displayMode": "list", "placement": "bottom" }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" },
+            "custom": {
+              "lineWidth": 2,
+              "fillOpacity": 10
+            },
+            "unit": "reqps"
+          }
+        },
+        "targets": [
+          {
+            "expr": "rate(istio_requests_total[5m])",
+            "legendFormat": "Total Requests",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(istio_requests_total{response_code='403'}[5m])",
+            "legendFormat": "Blocked Requests",
+            "refId": "B"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "🛡️ Pod Security Status",
+        "type": "table",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+        "options": {
+          "showHeader": true,
+          "footer": { "show": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "center",
+              "displayMode": "color-background"
+            }
+          },
+          "overrides": [
+            {
+              "matcher": { "id": "byName", "options": "Status" },
+              "properties": [
+                {
+                  "id": "mappings",
+                  "value": [
+                    { "type": "value", "options": {
+                      "healthy": { "text": "✅ Healthy", "color": "green" },
+                      "isolated": { "text": "🚨 Isolated", "color": "red" },
+                      "warning": { "text": "⚠️ Warning", "color": "yellow" }
+                    }}
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "targets": [
+          {
+            "expr": "kube_pod_info",
+            "legendFormat": "{{pod}}",
+            "refId": "A",
+            "instant": true
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "⚙️ System Resource Usage",
+        "type": "timeseries",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+        "options": {
+          "tooltip": { "mode": "multi" },
+          "legend": { "displayMode": "list", "placement": "bottom" }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" },
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "targets": [
+          {
+            "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{mode='idle'}[5m])))",
+            "legendFormat": "CPU Usage %",
+            "refId": "A"
+          },
+          {
+            "expr": "100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)",
+            "legendFormat": "Memory Usage %",
+            "refId": "B"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "🔔 Recent Security Alerts",
+        "type": "logs",
+        "gridPos": { "h": 6, "w": 24, "x": 0, "y": 20 },
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "showCommonLabels": false,
+          "wrapLogMessage": true,
+          "sortOrder": "Descending",
+          "dedupStrategy": "none",
+          "enableLogDetails": true
+        },
+        "targets": [
+          {
+            "expr": "{app='falco'} |= 'CRITICAL' or 'WARNING'",
+            "legendFormat": "",
+            "refId": "A"
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "5s", "10s", "30s", "1m", "5m"
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "name": "Security Events",
+          "datasource": "Prometheus",
+          "enable": true,
+          "expr": "changes(cloudsentinel_pods_isolated_total[1m]) > 0",
+          "iconColor": "red",
+          "titleFormat": "Pod Isolated"
+        }
+      ]
+    }
+  },
+  "overwrite": true,
+  "folderId": 0,
+  "message": "CloudSentinel Dashboard — AMD Hackathon 2026"
+}
