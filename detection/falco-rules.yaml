@@ -1,0 +1,71 @@
+- rule: Unauthorized API Access
+  desc: Detect unauthorized API calls to sensitive endpoints
+  condition: >
+    spawned_process and
+    proc.name in (curl, wget) and
+    not proc.pname in (allowed_processes)
+  output: >
+    Unauthorized API access detected
+    (user=%user.name command=%proc.cmdline)
+  priority: CRITICAL
+  tags: [network, api, cloudsentinel]
+
+- rule: Suspicious Pod Exec
+  desc: Detect execution inside a running pod
+  condition: >
+    spawned_process and
+    container and
+    proc.name = sh and
+    proc.pname = runc
+  output: >
+    Shell spawned in container
+    (user=%user.name container=%container.name)
+  priority: WARNING
+  tags: [container, shell, cloudsentinel]
+
+- rule: Crypto Mining Detection
+  desc: Detect potential crypto mining activity
+  condition: >
+    spawned_process and
+    proc.name in (minerd, xmrig, cryptonight)
+  output: >
+    Crypto miner detected
+    (user=%user.name process=%proc.name)
+  priority: CRITICAL
+  tags: [malware, mining, cloudsentinel]
+
+- rule: Sensitive File Access
+  desc: Detect access to sensitive files
+  condition: >
+    open_read and
+    fd.name in (/etc/passwd, /etc/shadow,
+    /etc/kubernetes/admin.conf)
+  output: >
+    Sensitive file accessed
+    (user=%user.name file=%fd.name)
+  priority: ERROR
+  tags: [filesystem, sensitive, cloudsentinel]
+
+- rule: Outbound Network Anomaly
+  desc: Detect unexpected outbound connections
+  condition: >
+    outbound and
+    not fd.sip in (allowed_outbound_ips) and
+    container
+  output: >
+    Unexpected outbound connection
+    (container=%container.name ip=%fd.sip)
+  priority: WARNING
+  tags: [network, anomaly, cloudsentinel]
+
+- rule: Privilege Escalation Attempt
+  desc: Detect privilege escalation attempts
+  condition: >
+    spawned_process and
+    proc.name in (sudo, su) and
+    container
+  output: >
+    Privilege escalation attempt in container
+    (user=%user.name container=%container.name)
+  priority: CRITICAL
+  tags: [privilege, escalation, cloudsentinel]
